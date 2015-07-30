@@ -55,26 +55,40 @@
     };
 
     EdmundsVehicle.prototype.sendRequest = function(url, cb) {
-        var xmlhttp = new XMLHttpRequest(),
-            instance = this;
+        var instance = this,
+            xmlHttp = null;
 
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState === xmlhttp.DONE) {
-                if (xmlhttp.status === 200) {
-                    return cb(JSON.parse(xmlhttp.response));
+        if (window.ActiveXObject) {
+            xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+        else {
+            xmlHttp = new XMLHttpRequest();
+        }
+
+        xmlHttp.onreadystatechange = function() {
+            // IE9 doesn't have the DONE constant set so we need to patch for it.
+            var xmlHttpDone = window.ActiveXObject ? 4 : xmlHttp.DONE;
+
+            if (xmlHttp.readyState === xmlHttpDone) {
+                if (xmlHttp.status === 200) {
+                    if (window.ActiveXObject) {
+                        return cb(JSON.parse(xmlHttp.responseText));
+                    }
+
+                    return cb(JSON.parse(xmlHttp.response));
                 }
 
-                if (xmlhttp.status >= 400 && xmlhttp.status <= 499) {
-                    return instance.handleFourHundredError(xmlhttp.status);
+                if (xmlHttp.status >= 400 && xmlHttp.status <= 499) {
+                    return instance.handleFourHundredError(xmlHttp.status);
                 }
 
-                if (xmlhttp.status >= 500 && xmlhttp.status <= 599) {
+                if (xmlHttp.status >= 500 && xmlHttp.status <= 599) {
                     return instance.handleFiveHundredError();
                 }
             }
         };
-        xmlhttp.open('GET', url, true);
-        xmlhttp.send();
+        xmlHttp.open('GET', url, true);
+        xmlHttp.send();
     };
 
     EdmundsVehicle.prototype.handleFourHundredError = function(httpStatus) {
