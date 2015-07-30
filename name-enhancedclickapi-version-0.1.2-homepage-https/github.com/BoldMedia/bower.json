@@ -1,0 +1,14 @@
+{
+    "name": "edmundsvehicle",
+    "version": "0.1.2",
+    "homepage": "https://github.com/BoldMedia/EdmundsVehicle/",
+    "authors": [
+        "David Jenkins <david.nicholas.jenkins@gmail.com>"
+    ],
+    "description": "JavaScript library to easily interface with Katch's Enhanced Click API.",
+    "main": "EdmundsVehicle.js",
+    "license": "MIT",
+    "ignore": [
+        "bower.json"
+    ]
+}
